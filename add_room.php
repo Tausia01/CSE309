@@ -62,7 +62,7 @@
             color: white;
             border: none;
             border-radius: 4px;
-            cursor:pointer;
+            cursor: pointer;
             font-size: 14px;
         }
 
@@ -78,20 +78,52 @@
     <!-- Page heading -->
     <h3>Add New Room</h3>
 
+    <?php
+    // Check if form is submitted
+    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        // Include database connection
+        include 'db_config.php';
+
+        // Collect form data
+        $room_name = htmlspecialchars($_POST['room_name']);
+        $room_type = htmlspecialchars($_POST['room_type']);
+        $capacity = intval($_POST['capacity']);
+        $building = htmlspecialchars($_POST['building']);
+
+        // SQL to insert data into the Rooms table
+        $sql = "INSERT INTO Rooms (room_name, room_type, capacity, building) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+
+        if ($stmt) {
+            $stmt->bind_param("ssis", $room_name, $room_type, $capacity, $building); // Bind parameters
+            if ($stmt->execute()) {
+                echo "<p style='color: green;'>Room '$room_name' of type '$room_type' with capacity $capacity in '$building' has been added successfully!</p>";
+            } else {
+                echo "<p style='color: red;'>Error: Could not add the room. " . $stmt->error . "</p>";
+            }
+            $stmt->close(); // Close the statement
+        } else {
+            echo "<p style='color: red;'>Error preparing statement: " . $conn->error . "</p>";
+        }
+
+        $conn->close(); // Close the database connection
+    }
+    ?>
+
     <!-- Form content -->
-    <form action="add_room_process.php" method="POST">
+    <form action="" method="POST">
         <label for="room_name">Room Name:</label>
         <input type="text" id="room_name" name="room_name" required><br>
 
         <label for="room_type">Room Type:</label>
         <select id="room_type" name="room_type" required>
-            <option value="classroom">Classroom</option>
-            <option value="computer lab">Computer Lab</option>
-            <option value="physics lab">Physics Lab</option>
-            <option value="pharmacy lab">Pharmacy Lab</option>
+            <option value="Classroom">Classroom</option>
+            <option value="Computer Lab">Computer Lab</option>
+            <option value="Physics Lab">Physics Lab</option>
+            <option value="Pharmacy Lab">Pharmacy Lab</option>
             <option value="Lecture Gallery">Lecture Gallery</option>
-            <option value="multipurpose hall">Multipurpose Hall</option>
-            <option value="auditorium">Auditorium</option>
+            <option value="Multipurpose Hall">Multipurpose Hall</option>
+            <option value="Auditorium">Auditorium</option>
         </select><br>
 
         <label for="capacity">Capacity:</label>
