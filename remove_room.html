@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Room</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+                /* Navbar styles */
+        #navbar {
+        width: 100%; /* Make sure navbar spans the full width */
+        }
+
+        h1 {
+            text-align: center;
+            color: rgb(56, 154, 215);
+            font-weight: bold;
+        }
+
+        /* Styling the room list table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background-color: white;
+            font-size: 16px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: rgb(56, 154, 215);
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Remove button */
+        .remove-btn {
+            padding: 8px 12px;
+            background-color: #FF4C4C;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            background-color: #d43c3c;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar"></div>
+   
+        <h1>Remove Room</h1>
+
+        <!-- Table to display room information -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Room Name</th>
+                    <th>Type</th>
+                    <th>Capacity</th>
+                    <th>Building</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Sample row data; replace with dynamic content as needed -->
+                <tr>
+                    <td>Room A101</td>
+                    <td>Classroom</td>
+                    <td>40</td>
+                    <td>Main Building</td>
+                    <td><button class="remove-btn">Remove</button></td>
+                </tr>
+                <tr>
+                    <td>Lab B102</td>
+                    <td>Computer Lab</td>
+                    <td>30</td>
+                    <td>DMK</td>
+                    <td><button class="remove-btn">Remove</button></td>
+                </tr>
+                <tr>
+                    <td>Hall C203</td>
+                    <td>Lecture Gallery</td>
+                    <td>100</td>
+                    <td>Jubilee Building</td>
+                    <td><button class="remove-btn">Remove</button></td>
+                </tr>
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+
+    <!-- Script to fetch the header content -->
+    <script>
+        fetch('admin_header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar').innerHTML = data;
+            });
+    </script>
+
+</body>
+</html>

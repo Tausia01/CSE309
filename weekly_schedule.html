@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Classroom Booking Calendar</title>
+    <style>
+        /* Basic reset and styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 80%;
+            max-width: 1000px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .class-select {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+        .day {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            background-color: #f9f9f9;
+            min-height: 80px;
+            position: relative;
+        }
+        .day h3 {
+            margin: 0;
+            font-size: 14px;
+            color: #555;
+        }
+        .booking {
+            background-color: #4CAF50;
+            color: white;
+            padding: 4px;
+            border-radius: 4px;
+            margin-top: 5px;
+            font-size: 12px;
+            text-align: center;
+        }
+        .day.empty {
+            background-color: #fff;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Classroom Booking Calendar</h1>
+    
+    <!-- Dropdown to select a classroom -->
+    <div class="class-select">
+        <label for="classSelect">Select a Class:</label>
+        <select id="classSelect">
+            <option value="class101">Classroom 101</option>
+            <option value="class102">Classroom 102</option>
+            <option value="class103">Classroom 103</option>
+            <!-- Add more classrooms as needed -->
+        </select>
+    </div>
+    
+    <!-- Calendar grid -->
+    <div class="calendar">
+        <!-- Display days of the week -->
+        <div class="day"><h3>Sunday</h3></div>
+        <div class="day"><h3>Monday</h3></div>
+        <div class="day"><h3>Tuesday</h3></div>
+        <div class="day"><h3>Wednesday</h3></div>
+        <div class="day"><h3>Thursday</h3></div>
+        <div class="day"><h3>Friday</h3></div>
+        <div class="day"><h3>Saturday</h3></div>
+
+        <!-- Calendar days with sample bookings -->
+        <div class="day empty"></div> <!-- Empty cells for days not in the month start -->
+        <div class="day"><h3>1</h3></div>
+        <div class="day"><h3>2</h3></div>
+        <div class="day"><h3>3</h3><div class="booking">Math 101 - 9AM</div></div>
+        <div class="day"><h3>4</h3></div>
+        <div class="day"><h3>5</h3><div class="booking">Physics 102 - 11AM</div></div>
+        <div class="day"><h3>6</h3></div>
+        <div class="day"><h3>7</h3><div class="booking">Chemistry 101 - 2PM</div></div>
+        
+        <!-- Repeat similar cells to complete the month -->
+        <div class="day"><h3>8</h3></div>
+        <div class="day"><h3>9</h3><div class="booking">English 201 - 1PM</div></div>
+        <!-- Fill in the rest of the month -->
+        <!-- Add empty days if needed at the end of the month -->
+    </div>
+</div>
+
+</body>
+</html>
