@@ -1,4 +1,3 @@
-
 <?php
 // Include PHPSpreadsheet library
 require 'vendor/autoload.php'; // Make sure this is the correct path to your autoload file
@@ -22,12 +21,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $sheet = $spreadsheet->getActiveSheet();
 
             // Example: Extracting data from the first sheet
-           
-            $rowIndex = 5; // Starting from the 4th row
+            $rowIndex = 5; // Starting from the 5th row (adjust as needed)
             $bookingData = [];
 
-            // Loop through the rows to get the data (adjust column indices based on your sheet structure)
+            // Get all merged cells
+            $mergedCells = $sheet->getMergeCells();
+
+            // Loop through the rows to get the data
             while ($sheet->getCell('A' . $rowIndex)->getValue() !== '') { // Assuming column A contains data
+                // Check if the current row's cell is merged
+                $cellCoordinate = 'A' . $rowIndex;
+                if (in_array($cellCoordinate, $mergedCells)) {
+                    // If a merged cell is encountered, break the loop
+                    echo "Merged cell found at $cellCoordinate, stopping loop.";
+                    break; // Stop looping
+                }
+
+                // Extract the data from the sheet
                 $roomID = $sheet->getCell('H' . $rowIndex)->getValue();
                 $roomCapacity = $sheet->getCell('I' . $rowIndex)->getValue();
                 $faculty = $sheet->getCell('L' . $rowIndex)->getValue();
@@ -44,21 +54,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'endTime' => $endTime,
                     'day' => $day
                 ];
-                $rowIndex++;
 
-                
+                // Move to the next row
+                $rowIndex++;
             }
 
             // Display extracted data (for testing purposes)
             echo "<h3>Extracted Schedule Data:</h3>";
             echo "<pre>";
-            print_r($scheduleData);
-            echo "</pre>";
-
-            // Display semester dates
-            echo "<h3>Semester Dates:</h3>";
-            echo "<p>Semester Start: $semesterStart</p>";
-            echo "<p>Semester End: $semesterEnd</p>";
+            print_r($bookingData);
+            echo "</pre>"; // Closing the <pre> tag for formatted output
 
         } catch (Exception $e) {
             echo 'Error loading file: ' . $e->getMessage();
@@ -81,17 +86,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php include 'admin_header.php'; ?>
     <h2>Upload an Excel File to Import Schedule</h2>
     <form action="" method="POST" enctype="multipart/form-data">
-    <label for="file">Select Excel File:</label>
-    <input type="file" name="excel_file" id="file" accept=".xlsx, .xls" required>
+        <label for="file">Select Excel File:</label>
+        <input type="file" name="excel_file" id="file" accept=".xlsx, .xls" required>
 
-    <label for="semester_start">Semester Start:</label>
-    <input type="date" name="semester_start" id="semester_start" required>
+        <label for="semester_start">Semester Start:</label>
+        <input type="date" name="semester_start" id="semester_start" required>
 
-    <label for="semester_end">Semester End:</label>
-    <input type="date" name="semester_end" id="semester_end" required>
+        <label for="semester_end">Semester End:</label>
+        <input type="date" name="semester_end" id="semester_end" required>
 
-    <button type="submit">Upload and Process</button>
-</form>
-
+        <button type="submit">Upload and Process</button>
+    </form>
 </body>
 </html>
