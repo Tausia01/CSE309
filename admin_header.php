@@ -13,6 +13,7 @@
                 <a href="remove_room.php">Remove Room</a>
             </div>
         </div>
+        <a href="import_schedule.php">Import Schedule</a>
 
         <a href="index.html">Sign Out</a>
     </nav>
