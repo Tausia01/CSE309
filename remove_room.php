@@ -58,7 +58,8 @@
     </style>
 </head>
 <body>
-    <div id="navbar"></div>
+    <!-- Include Navbar -->
+    <?php include 'admin_header.php'; ?>
     <h1>Remove Room</h1>
 
     <table>
@@ -118,12 +119,5 @@
         </tbody>
     </table>
 
-    <script>
-        fetch('admin_header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('navbar').innerHTML = data;
-            });
-    </script>
 </body>
 </html>

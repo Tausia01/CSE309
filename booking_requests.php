@@ -67,8 +67,8 @@
     </style>
 </head>
 <body>
-    <!-- Navbar container -->
-    <div id="navbar"></div>
+    <!-- Include Navbar -->
+    <?php include 'admin_header.php'; ?>
 
     <!-- Page title -->
     <h1>Classroom Booking Requests</h1>
@@ -118,13 +118,6 @@
         <!-- Additional rows as needed -->
     </table>
 
-    <!-- Script to fetch the header content -->
-    <script>
-        fetch('admin_header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('navbar').innerHTML = data;
-            });
-    </script>
+
 </body>
 </html>

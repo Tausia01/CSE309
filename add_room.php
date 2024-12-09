@@ -72,8 +72,8 @@
     </style>
 </head>
 <body>
-    <!-- Navbar placeholder for loading external content -->
-    <div id="navbar"></div>
+    <!-- Include Navbar -->
+    <?php include 'admin_header.php'; ?>
 
     <!-- Page heading -->
     <h3>Add New Room</h3>
@@ -139,13 +139,5 @@
         <input type="submit" value="Add Room">
     </form>
 
-    <!-- Script to load navbar content from external file -->
-    <script>
-        fetch('admin_header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('navbar').innerHTML = data;
-            });
-    </script>
 </body>
 </html>
