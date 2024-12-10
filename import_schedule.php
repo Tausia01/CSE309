@@ -3,6 +3,7 @@
 require 'vendor/autoload.php'; // Make sure this is the correct path to your autoload file
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+ini_set('memory_limit', '2G'); // Set to 2GB
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Check if a file is uploaded
@@ -17,8 +18,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Try to load the spreadsheet
         try {
             // Load the spreadsheet
-            $spreadsheet = IOFactory::load($fileTmpPath);
+
+            $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($fileTmpPath);
+            $reader->setReadDataOnly(true); // Disable loading styles and unnecessary metadata
+            $spreadsheet = $reader->load($fileTmpPath);
             $sheet = $spreadsheet->getActiveSheet();
+            if (!$sheet) {
+                die('Error: Could not load the active sheet. Please check the file.');
+            }
+
 
             // Example: Extracting data from the first sheet
             $rowIndex = 5; // Starting from the 5th row (adjust as needed)
@@ -28,14 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $mergedCells = $sheet->getMergeCells();
 
             // Loop through the rows to get the data
-            while ($sheet->getCell('A' . $rowIndex)->getValue() !== '') { // Assuming column A contains data
-                // Check if the current row's cell is merged
-                $cellCoordinate = 'A' . $rowIndex;
-                if (in_array($cellCoordinate, $mergedCells)) {
-                    // If a merged cell is encountered, break the loop
-                    echo "Merged cell found at $cellCoordinate, stopping loop.";
-                    break; // Stop looping
-                }
+                while ($rowIndex <= 160){ //&& $sheet->getCell('A' . $rowIndex)->getValue() !== '') {
 
                 // Extract the data from the sheet
                 $roomID = $sheet->getCell('H' . $rowIndex)->getValue();
