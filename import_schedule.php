@@ -44,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $faculty = $sheet->getCell('L' . $rowIndex)->getValue();
                 $startTime = $sheet->getCell('M' . $rowIndex)->getValue();
                 $endTime = $sheet->getCell('N' . $rowIndex)->getValue();
+                    
+
                 $day = $sheet->getCell('O' . $rowIndex)->getValue();
 
                 // Store the data in an array
