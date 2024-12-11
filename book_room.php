@@ -131,8 +131,8 @@
 </head>
 <body>
 
-    <!-- Navbar placeholder -->
-    <div id="navbar"></div>
+    <!-- Include Navbar -->
+    <?php include 'faculty_header.php'; ?>
 
     <div class="container">
         <!-- Form Section (Left Column) -->
@@ -219,11 +219,6 @@
 
     <!-- JavaScript to load navbar content -->
     <script>
-        fetch('faculty_header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('navbar').innerHTML = data;
-            });
 
         let selectedRoom = null;
 
@@ -240,5 +235,6 @@
             }
         }
     </script>
+    
 </body>
 </html>

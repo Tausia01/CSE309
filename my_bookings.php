@@ -90,8 +90,8 @@
 </head>
 <body>
 
-    <!-- Navbar placeholder -->
-    <div id="navbar"></div>
+    <!-- Include Navbar -->
+    <?php include 'faculty_header.php'; ?>
 
     <div class="container">
         <h1>My Bookings</h1>
@@ -136,13 +136,5 @@
         </table>
     </div>
 
-    <!-- JavaScript to load navbar content -->
-    <script>
-        fetch('faculty_header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('navbar').innerHTML = data;
-            });
-    </script>
 </body>
 </html>
