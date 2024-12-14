@@ -116,22 +116,8 @@
                     <td>12:00 PM</td>
                     <td><span class="status status-confirmed">Confirmed</span></td>
                 </tr>
-                <tr>
-                    <td>BC4007</td>
-                    <td>EE201 - Circuit Theory</td>
-                    <td>2024-11-12</td>
-                    <td>01:00 PM</td>
-                    <td>03:00 PM</td>
-                    <td><span class="status status-pending">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>CSC Lab 01</td>
-                    <td>CS303 - Data Structures</td>
-                    <td>2024-11-15</td>
-                    <td>09:00 AM</td>
-                    <td>11:00 AM</td>
-                    <td><span class="status status-rejected">Rejected</span></td>
-                </tr>
+
+
             </tbody>
         </table>
     </div>
