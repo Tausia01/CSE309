@@ -138,7 +138,7 @@
         <!-- Form Section (Left Column) -->
         <div class="form-section">
             <h2>Room Requirements</h2>
-            <form class="form-grid" action="check_availability.php" method="POST">
+            <form class="form-grid" action="javascript:checkAvailability();" method="POST">
                 <div>
                     <label for="room_type">Room Type:</label>
                     <select id="room_type" name="room_type" required>
@@ -193,24 +193,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr onclick="selectRoom('Room A')">
-                        <td>DMK1023</td>
-                    </tr>
-                    <tr onclick="selectRoom('Room B')">
-                        <td>BC4007</td>
-                    </tr>
-                    <tr onclick="selectRoom('Room C')">
-                        <td>CSC Lab 01</td>
-                    </tr>
-                    <tr onclick="selectRoom('Room A')">
-                        <td>DMK1023</td>
-                    </tr>
-                    <tr onclick="selectRoom('Room C')">
-                        <td>CSC Lab 02</td>
-                    </tr>
-                    <tr onclick="selectRoom('Room C')">
-                        <td>CSC Lab 01</td>
-                    </tr>
+                    <!-- dynamic data generation -->
+   
                 </tbody>
             </table>
             <button class="book-button" onclick="bookRoom()">Book</button>
@@ -234,6 +218,41 @@
                 alert("Please select a room to book.");
             }
         }
+
+        function checkAvailability() {
+    // Collect form data
+    const formData = new FormData(document.querySelector('.form-grid'));
+
+    // Send AJAX request to the backend
+    fetch('check_availability.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        const tableBody = document.querySelector('.table-section tbody');
+        tableBody.innerHTML = ''; // Clear previous rows
+
+        if (data.length > 0) {
+            data.forEach(room => {
+                const row = document.createElement('tr');
+                row.onclick = () => selectRoom(room.name);
+                row.innerHTML = `<td>${room.name}</td>`;
+                tableBody.appendChild(row);
+            });
+        } else {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td colspan="1">No rooms available</td>`;
+            tableBody.appendChild(row);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to fetch available rooms');
+    });
+}
+
+
     </script>
     
 </body>
