@@ -221,36 +221,65 @@
 
         function checkAvailability() {
     // Collect form data
-    const formData = new FormData(document.querySelector('.form-grid'));
+    const form = document.querySelector('.form-grid');
+    const formData = new FormData(form);
+
+    // Convert start and end times to 24-hour format if needed
+    const startTimeInput = form.querySelector('#start_time').value;
+    const endTimeInput = form.querySelector('#end_time').value;
+
+    // Parse and format the times
+    const startTime24 = convertTo24HourFormat(startTimeInput);
+    const endTime24 = convertTo24HourFormat(endTimeInput);
+
+    // Update the FormData object with the converted times
+    formData.set('start_time', startTime24);
+    formData.set('end_time', endTime24);
 
     // Send AJAX request to the backend
     fetch('check_availability.php', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        const tableBody = document.querySelector('.table-section tbody');
-        tableBody.innerHTML = ''; // Clear previous rows
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.querySelector('.table-section tbody');
+            tableBody.innerHTML = ''; // Clear previous rows
 
-        if (data.length > 0) {
-            data.forEach(room => {
+            if (data.length > 0) {
+                data.forEach(room => {
+                    const row = document.createElement('tr');
+                    row.onclick = () => selectRoom(room.name);
+                    row.innerHTML = `<td>${room.name}</td>`;
+                    tableBody.appendChild(row);
+                });
+            } else {
                 const row = document.createElement('tr');
-                row.onclick = () => selectRoom(room.name);
-                row.innerHTML = `<td>${room.name}</td>`;
+                row.innerHTML = `<td colspan="1">No rooms available</td>`;
                 tableBody.appendChild(row);
-            });
-        } else {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td colspan="1">No rooms available</td>`;
-            tableBody.appendChild(row);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to fetch available rooms');
-    });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to fetch available rooms');
+        });
 }
+
+// Helper function to convert 12-hour time to 24-hour format
+function convertTo24HourFormat(time) {
+    const [hours, minutes] = time.split(':');
+    const isPM = time.toLowerCase().includes('pm');
+    let hours24 = parseInt(hours, 10);
+
+    if (isPM && hours24 !== 12) {
+        hours24 += 12;
+    } else if (!isPM && hours24 === 12) {
+        hours24 = 0;
+    }
+
+    return `${hours24.toString().padStart(2, '0')}:${minutes}`;
+}
+
 
 
     </script>

@@ -92,16 +92,71 @@
 <body>
     <div class="sign-in-container">
         <h2>Log In</h2>
-        <form>
+        <form action="index.php" method="POST"> 
             <label for="id">ID</label>
             <input type="text" id="id" name="id" required>
 
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
 
-            <button><a href="./book_room.html">Log In</a></button>
+            <button type="submit">Log In</button>
         </form>
         <a href="sign_up.html" class="sign-up-link">Sign Up Now</a>
     </div>
 </body>
 </html>
+
+
+<?php
+// Include the database connection
+include 'db_config.php';
+
+// Check if the request method is POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Collect and sanitize form data
+    $id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
+    $password = $_POST['password'];
+
+    try {
+        // Determine if the user is admin or faculty
+        if (is_numeric($id)) {
+            // Check if the user exists in the faculty table
+            $stmt = $conn->prepare("SELECT password FROM faculty WHERE id = ?");
+            $stmt->bind_param('i', $id);
+        } else {
+            // Check if the user exists in the admin table (using email)
+            $stmt = $conn->prepare("SELECT password FROM admins WHERE email = ?");
+            $stmt->bind_param('s', $id);
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $hashedPassword = $row['password'];
+
+            // Verify the password
+            if (password_verify($password, $hashedPassword)) {
+                // Redirect based on user type
+                if (is_numeric($id)) {
+                    // Redirect faculty
+                    header("Location: faculty_account.php");
+                } else {
+                    // Redirect admin
+                    header("Location: admin_dashboard.php");
+                }
+                exit;
+            } else {
+                die("Invalid password.");
+            }
+        } else {
+            die("User not found.");
+        }
+    } catch (Exception $e) {
+        die("Error: " . $e->getMessage());
+    }
+} else {
+    die("Invalid request method.");
+}
+?>
