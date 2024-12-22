@@ -101,7 +101,7 @@
 
             <button type="submit">Log In</button>
         </form>
-        <a href="sign_up.html" class="sign-up-link">Sign Up Now</a>
+        <a href="sign_up.php" class="sign-up-link">Sign Up Now</a>
     </div>
 </body>
 </html>
@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header("Location: faculty_account.php");
                 } else {
                     // Redirect admin
-                    header("Location: admin_dashboard.php");
+                    header("Location: booking_requests.php");
                 }
                 exit;
             } else {

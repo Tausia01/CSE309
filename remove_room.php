@@ -73,49 +73,53 @@
             </tr>
         </thead>
         <tbody>
-            <?php
-            include 'db_config.php'; // Include your database connection file
+        <?php
+include 'db_config.php'; // Include your database connection file
 
-            // Handle deletion if a room is removed
-            if (isset($_POST['delete_room_id'])) {
-                $room_id = intval($_POST['delete_room_id']);
-                $delete_query = $conn->prepare("DELETE FROM Rooms WHERE room_id = ?");
-                $delete_query->bind_param("i", $room_id);
-                $delete_query->execute();
-                if ($delete_query->affected_rows > 0) {
-                    echo "<script>alert('Room deleted successfully');</script>";
-                } else {
-                    echo "<script>alert('Failed to delete the room');</script>";
-                }
-                $delete_query->close();
-            }
+// Handle deletion if a room is removed
+if (isset($_POST['delete_room_id'])) {
+    $room_id = intval($_POST['delete_room_id']);
+    
+    // Prepare and execute the deletion query
+    $delete_query = $conn->prepare("DELETE FROM rooms WHERE id = ?");
+    $delete_query->bind_param("i", $room_id);
+    $delete_query->execute();
 
-            // Fetch all rooms from the database
-            $query = "SELECT * FROM Rooms";
-            $result = $conn->query($query);
+    if ($delete_query->affected_rows > 0) {
+        echo "<script>alert('Room deleted successfully');</script>";
+    } else {
+        echo "<script>alert('Failed to delete the room. It may not exist or is linked to other data.');</script>";
+    }
+    $delete_query->close();
+}
 
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr>
-                            <td>" . htmlspecialchars($row['room_name']) . "</td>
-                            <td>" . htmlspecialchars($row['room_type']) . "</td>
-                            <td>" . htmlspecialchars($row['capacity']) . "</td>
-                            <td>" . htmlspecialchars($row['building']) . "</td>
-                            <td>
-                                <form method='POST' style='margin:0;'>
-                                    <input type='hidden' name='delete_room_id' value='" . htmlspecialchars($row['room_id']) . "'>
-                                    <button type='submit' class='remove-btn'>Remove</button>
-                                </form>
-                            </td>
-                        </tr>";
-                }
-            } else {
-                echo "<tr><td colspan='5'>No rooms found</td></tr>";
-            }
+// Fetch all rooms from the database
+$query = "SELECT id, name, type, capacity, building FROM rooms";
+$result = $conn->query($query);
 
-            $result->close();
-            $conn->close();
-            ?>
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>
+                <td>" . htmlspecialchars($row['name']) . "</td>
+                <td>" . htmlspecialchars($row['type']) . "</td>
+                <td>" . htmlspecialchars($row['capacity']) . "</td>
+                <td>" . htmlspecialchars($row['building']) . "</td>
+                <td>
+                    <form method='POST' style='margin:0;'>
+                        <input type='hidden' name='delete_room_id' value='" . htmlspecialchars($row['id']) . "'>
+                        <button type='submit' class='remove-btn'>Remove</button>
+                    </form>
+                </td>
+            </tr>";
+    }
+} else {
+    echo "<tr><td colspan='5'>No rooms found</td></tr>";
+}
+
+$result->close();
+$conn->close();
+?>
+
         </tbody>
     </table>
 

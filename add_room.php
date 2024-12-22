@@ -79,36 +79,40 @@
     <h3>Add New Room</h3>
 
     <?php
-    // Check if form is submitted
-    if ($_SERVER["REQUEST_METHOD"] === "POST") {
-        // Include database connection
-        include 'db_config.php';
+// Check if form is submitted
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Include database connection
+    include 'db_config.php';
 
-        // Collect form data
-        $room_name = htmlspecialchars($_POST['room_name']);
-        $room_type = htmlspecialchars($_POST['room_type']);
-        $capacity = intval($_POST['capacity']);
-        $building = htmlspecialchars($_POST['building']);
+    // Collect and sanitize form data
+    $room_name = htmlspecialchars($_POST['room_name']);
+    $room_type = htmlspecialchars($_POST['room_type']);
+    $capacity = intval($_POST['capacity']);
+    $building = htmlspecialchars($_POST['building']);
 
-        // SQL to insert data into the Rooms table
-        $sql = "INSERT INTO Rooms (room_name, room_type, capacity, building) VALUES (?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
+    // SQL to insert data into the rooms table
+    $sql = "INSERT INTO rooms (name, type, capacity, building) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
 
-        if ($stmt) {
-            $stmt->bind_param("ssis", $room_name, $room_type, $capacity, $building); // Bind parameters
-            if ($stmt->execute()) {
-                echo "<p style='color: green;'>Room '$room_name' of type '$room_type' with capacity $capacity in '$building' has been added successfully!</p>";
-            } else {
-                echo "<p style='color: red;'>Error: Could not add the room. " . $stmt->error . "</p>";
-            }
-            $stmt->close(); // Close the statement
+    if ($stmt) {
+        // Bind parameters
+        $stmt->bind_param("ssis", $room_name, $room_type, $capacity, $building);
+        
+        // Execute the statement
+        if ($stmt->execute()) {
+            echo "<p style='color: green;'>Room '$room_name' of type '$room_type' with capacity $capacity in '$building' has been added successfully!</p>";
         } else {
-            echo "<p style='color: red;'>Error preparing statement: " . $conn->error . "</p>";
+            echo "<p style='color: red;'>Error: Could not add the room. " . $stmt->error . "</p>";
         }
-
-        $conn->close(); // Close the database connection
+        $stmt->close(); // Close the statement
+    } else {
+        echo "<p style='color: red;'>Error preparing statement: " . $conn->error . "</p>";
     }
-    ?>
+
+    $conn->close(); // Close the database connection
+}
+?>
+
 
     <!-- Form content -->
     <form action="" method="POST">
