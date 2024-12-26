@@ -13,276 +13,242 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100vh;
         }
 
-        /* Full-width navbar */
-        #navbar {
+        .main-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 20px;
             width: 100%;
+            max-width: 1200px;
         }
 
-        /* Main container styling */
         .container {
-            width: 100%;
-            max-width: 1000px;
+            flex: 1;
             background-color: #ffffff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
         }
 
-        /* Heading styles */
-        h1, h2 {
+        h2 {
             text-align: center;
             color: #333;
             font-weight: bold;
         }
 
-        /* Form and table sections */
-        .form-section, .table-section {
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-
-        /* Grid layout for the form */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        /* Label and input styling */
-        label {
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="date"],
-        input[type="time"],
-        select {
+        form, table {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
         }
 
-        /* Styling for the Enter button */
-        .enter-button {
-            grid-column: span 2;
-            text-align: center;
-        }
-
-        input[type="submit"],
-        button.book-button {
+        input, select, button {
+            width: 100%;
             padding: 10px;
-            background-color: #389AD7;
-            color: white;
-            border: none;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
             border-radius: 4px;
+        }
+
+        button {
+            background-color: #4fa0fd;
+            color: white;
+            font-weight: bold;
             cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            transition: background-color 0.3s ease;
         }
 
-        input[type="submit"]:hover,
-        button.book-button:hover {
-            background-color: #3080B5;
-        }
-
-        /* Table styling for available rooms */
         table {
-            width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
         }
 
-        table, th, td {
+        th, td {
+            padding: 10px;
+            text-align: center;
             border: 1px solid #ddd;
         }
 
         th {
-            background-color: #f0f0f0;
-            color: #333;
-            padding: 10px;
-            font-weight: bold;
-        }
-
-        td {
-            padding: 10px;
-            text-align: center;
+            background-color: rgb(56, 154, 215);
+            color: white;
         }
 
         tr:hover {
             background-color: #f1f1f1;
-            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #4562a0;
         }
     </style>
 </head>
 <body>
+<?php
+    ob_start();
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    include 'faculty_header.php'; ?>
+    <div class="main-container">
+        <!-- Form Container -->
+        <div class="container">
+            <h2>Book a Room</h2>
 
-    <!-- Include Navbar -->
-    <?php include 'faculty_header.php'; ?>
+            <!-- Form to input room requirements -->
+            <form id="roomRequirementsForm">
+                <label for="room_type">Room Type:</label>
+                <select id="room_type" name="room_type" required>
+                    <option value="classroom">Classroom</option>
+                    <option value="computer lab">Computer Lab</option>
+                    <option value="physics lab">Physics Lab</option>
+                    <option value="pharmacy lab">Pharmacy Lab</option>
+                    <option value="lecture gallery">Lecture Gallery</option>
+                </select>
 
-    <div class="container">
-        <!-- Form Section (Left Column) -->
-        <div class="form-section">
-            <h2>Room Requirements</h2>
-            <form class="form-grid" action="javascript:checkAvailability();" method="POST">
-                <div>
-                    <label for="room_type">Room Type:</label>
-                    <select id="room_type" name="room_type" required>
-                        <option value="classroom">Classroom</option>
-                        <option value="computer lab">Computer Lab</option>
-                        <option value="physics lab">Physics Lab</option>
-                        <option value="pharmacy lab">Pharmacy Lab</option>
-                        <option value="lecture gallery">Lecture Gallery</option>
-                        <option value="multipurpose hall">Multipurpose Hall</option>
-                        <option value="auditorium">Auditorium</option>
-                    </select>
-                </div>
+                <label for="capacity">Capacity:</label>
+                <input type="number" id="capacity" name="capacity" min="1" required>
 
-                <div>
-                    <label for="course">Course Name:</label>
-                    <input type="text" id="course" name="course" required>
-                </div>
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" required>
 
-                <div>
-                    <label for="capacity">Capacity:</label>
-                    <input type="number" id="capacity" name="capacity" min="1" required>
-                </div>
+                <label for="start_time">Start Time:</label>
+                <input type="time" id="start_time" name="start_time" required>
 
-                <div>
-                    <label for="date">Date:</label>
-                    <input type="date" id="date" name="date" required>
-                </div>
+                <label for="end_time">End Time:</label>
+                <input type="time" id="end_time" name="end_time" required>
 
-                <div>
-                    <label for="start_time">Start Time:</label>
-                    <input type="time" id="start_time" name="start_time" required>
-                </div>
-
-                <div>
-                    <label for="end_time">End Time:</label>
-                    <input type="time" id="end_time" name="end_time" required>
-                </div>
-
-                <div class="enter-button">
-                    <input type="submit" value="Enter">
-                </div>
+                <button type="button" onclick="checkAvailability()">Check Availability</button>
             </form>
         </div>
 
-        <!-- Available Rooms Table Section (Right Column) -->
-        <div class="table-section">
-            <h2>Book Room</h2>
+        <!-- Available Rooms Container -->
+        <div class="container">
+            <h2>Available Rooms</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Room Name</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <!-- dynamic data generation -->
-   
+                <tbody id="availableRooms">
+                    <!-- Rows are populated dynamically -->
                 </tbody>
             </table>
-            <button class="book-button" onclick="bookRoom()">Book</button>
         </div>
     </div>
 
-    <!-- JavaScript to load navbar content -->
     <script>
-
-        let selectedRoom = null;
-
-        function selectRoom(roomName) {
-            selectedRoom = roomName;
-        }
-
-        function bookRoom() {
-            if (selectedRoom) {
-                alert(`Booking ${selectedRoom}`);
-                // Perform booking or redirect here
-            } else {
-                alert("Please select a room to book.");
-            }
-        }
-
         function checkAvailability() {
-    // Collect form data
-    const form = document.querySelector('.form-grid');
-    const formData = new FormData(form);
+            const form = document.getElementById('roomRequirementsForm');
+            const formData = new FormData(form);
 
-    // Convert start and end times to 24-hour format if needed
-    const startTimeInput = form.querySelector('#start_time').value;
-    const endTimeInput = form.querySelector('#end_time').value;
+            fetch('check_availability.php', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('availableRooms');
+                    tableBody.innerHTML = ''; // Clear previous results
 
-    // Parse and format the times
-    const startTime24 = convertTo24HourFormat(startTimeInput);
-    const endTime24 = convertTo24HourFormat(endTimeInput);
-
-    // Update the FormData object with the converted times
-    formData.set('start_time', startTime24);
-    formData.set('end_time', endTime24);
-
-    // Send AJAX request to the backend
-    fetch('check_availability.php', {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.querySelector('.table-section tbody');
-            tableBody.innerHTML = ''; // Clear previous rows
-
-            if (data.length > 0) {
-                data.forEach(room => {
-                    const row = document.createElement('tr');
-                    row.onclick = () => selectRoom(room.name);
-                    row.innerHTML = `<td>${room.name}</td>`;
-                    tableBody.appendChild(row);
+                    if (data.length > 0) {
+                        data.forEach(room => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${room.name}</td>
+                                <td><button onclick="bookRoom(${room.id})">Book</button></td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                    } else {
+                        tableBody.innerHTML = '<tr><td colspan="2">No rooms available</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to fetch available rooms.');
                 });
-            } else {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="1">No rooms available</td>`;
-                tableBody.appendChild(row);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to fetch available rooms');
-        });
-}
+        }
 
-// Helper function to convert 12-hour time to 24-hour format
-function convertTo24HourFormat(time) {
-    const [hours, minutes] = time.split(':');
-    const isPM = time.toLowerCase().includes('pm');
-    let hours24 = parseInt(hours, 10);
+        function bookRoom(roomId) {
+            const form = document.getElementById('roomRequirementsForm');
+            const formData = new FormData(form);
+            formData.append('room_id', roomId);
 
-    if (isPM && hours24 !== 12) {
-        hours24 += 12;
-    } else if (!isPM && hours24 === 12) {
-        hours24 = 0;
-    }
-
-    return `${hours24.toString().padStart(2, '0')}:${minutes}`;
-}
-
-
-
+            fetch('book_room.php', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data); // Show server response
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to book the room.');
+                });
+        }
     </script>
-    
 </body>
 </html>
+
+<?php
+include 'db_config.php';
+
+// Check if the user is logged in
+if (!isset($_SESSION['faculty_id'])) {
+    echo "Unauthorized access. Please log in.";
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Collect form data
+    $faculty_id = $_SESSION['faculty_id'];
+    $room_id = intval($_POST['room_id']);
+    $course_name = htmlspecialchars($_POST['course_name']);
+    $date = $_POST['date'];
+    $start_time = $_POST['start_time'];
+    $end_time = $_POST['end_time'];
+
+    // Combine date and time for start and end
+    $start_datetime = $date . ' ' . $start_time;
+    $end_datetime = $date . ' ' . $end_time;
+
+    // Check for conflicting bookings
+    $conflict_query = "
+        SELECT * FROM bookings 
+        WHERE room_id = ? 
+        AND (
+            (start_time < ? AND end_time > ?)
+            OR (start_time < ? AND end_time > ?)
+            OR (start_time >= ? AND end_time <= ?)
+        )
+    ";
+    $stmt = $conn->prepare($conflict_query);
+    $stmt->bind_param('issssss', $room_id, $end_datetime, $start_datetime, $start_datetime, $end_datetime, $start_datetime, $end_datetime);
+    $stmt->execute();
+    $conflict_result = $stmt->get_result();
+
+    if ($conflict_result->num_rows > 0) {
+        echo "The selected room is already booked for the specified time.";
+    } else {
+        // Insert booking into the database
+        $insert_query = "
+            INSERT INTO bookings (room_id, faculty_id, course_name, start_time, end_time, status)
+            VALUES (?, ?, ?, ?, ?, 'Pending')
+        ";
+        $stmt = $conn->prepare($insert_query);
+        $stmt->bind_param('iisss', $room_id, $faculty_id, $course_name, $start_datetime, $end_datetime);
+
+        if ($stmt->execute()) {
+            echo "Booking request submitted successfully.";
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+    }
+
+    $stmt->close();
+}
+$conn->close();
+?>

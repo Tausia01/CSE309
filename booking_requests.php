@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,12 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classroom Booking Requests</title>
     <style>
-        /* Ensure that body takes up the entire viewport width */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
-            margin: 0; /* Remove any default margin */
-            padding: 0; /* Remove padding to let navbar span full width */
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -19,11 +20,6 @@
         h1 {
             color: #333;
             margin: 20px 0;
-        }
-        
-        /* Navbar styles */
-        #navbar {
-            width: 100%; /* Make sure navbar spans the full width */
         }
 
         table {
@@ -62,62 +58,113 @@
         }
 
         .confirm-button:hover {
-            background-color: rgb(56, 154, 215);
+            background-color: #1f78b4;
         }
     </style>
 </head>
 <body>
     <!-- Include Navbar -->
-    <?php include 'admin_header.php'; ?>
+    <?php 
+    ob_start();
+    session_start();
+    include 'admin_header.php'; ?>
 
     <!-- Page title -->
     <h1>Classroom Booking Requests</h1>
 
     <!-- Booking table -->
     <table>
-        <tr>
-            <th>Classroom Number</th>
-            <th>Faculty ID</th>
-            <th>Faculty Name</th>
-            <th>Date</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Status</th>
-            <th>Confirm</th>
-        </tr>
-        <tr>
-            <td>BC4007</td>
-            <td>22140</td>
-            <td>Dr. Readul Islam</td>
-            <td>2024-11-05</td>
-            <td>09:00</td>
-            <td>11:00</td>
-            <td>
-                <select name="status1">
-                    <option value="accept">Accept</option>
-                    <option value="reject">Reject</option>
-                </select>
-            </td>
-            <td><button class="confirm-button">Confirm</button></td>
-        </tr>
-        <tr>
-            <td>MK5006</td>
-            <td>21631</td>
-            <td>Mr. Abu Syed</td>
-            <td>2024-11-06</td>
-            <td>13:00</td>
-            <td>15:00</td>
-            <td>
-                <select name="status2">
-                    <option value="accept">Accept</option>
-                    <option value="reject">Reject</option>
-                </select>
-            </td>
-            <td><button class="confirm-button">Confirm</button></td>
-        </tr>
-        <!-- Additional rows as needed -->
+        <thead>
+            <tr>
+                <th>Classroom Number</th>
+                <th>Faculty ID</th>
+                <th>Faculty Name</th>
+                <th>Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Status</th>
+                <th>Confirm</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            include 'db_config.php';
+
+            $query = "
+                SELECT 
+                    b.id AS booking_id,
+                    r.name AS classroom,
+                    b.faculty_id,
+                    f.name AS faculty_name,
+                    DATE_FORMAT(b.start_time, '%Y-%m-%d') AS booking_date,
+                    DATE_FORMAT(b.start_time, '%H:%i') AS start_time,
+                    DATE_FORMAT(b.end_time, '%H:%i') AS end_time,
+                    b.status
+                FROM bookings b
+                JOIN rooms r ON b.room_id = r.id
+                JOIN faculty f ON b.faculty_id = f.id
+                ORDER BY b.start_time ASC
+            ";
+
+            $result = $conn->query($query);
+
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>
+                            <td>" . htmlspecialchars($row['classroom']) . "</td>
+                            <td>" . htmlspecialchars($row['faculty_id']) . "</td>
+                            <td>" . htmlspecialchars($row['faculty_name']) . "</td>
+                            <td>" . htmlspecialchars($row['booking_date']) . "</td>
+                            <td>" . htmlspecialchars($row['start_time']) . "</td>
+                            <td>" . htmlspecialchars($row['end_time']) . "</td>
+                            <td>
+                                <select id='status_" . $row['booking_id'] . "'>
+                                    <option value='Pending'" . ($row['status'] === 'Pending' ? ' selected' : '') . ">Pending</option>
+                                    <option value='Confirmed'" . ($row['status'] === 'Confirmed' ? ' selected' : '') . ">Confirm</option>
+                                    <option value='Rejected'" . ($row['status'] === 'Rejected' ? ' selected' : '') . ">Reject</option>
+                                </select>
+                            </td>
+                            <td><button class='confirm-button' onclick='updateStatus(" . $row['booking_id'] . ")'>Update</button></td>
+                          </tr>";
+                }
+            } else {
+                echo "<tr><td colspan='8'>No booking requests found.</td></tr>";
+            }
+
+            $conn->close();
+            ?>
+        </tbody>
     </table>
 
+    <script>
+function updateStatus(bookingId) {
+    const status = document.getElementById(`status_${bookingId}`).value;
+    console.log('Sending data:', JSON.stringify({ booking_id: bookingId, status: status }));
 
+    fetch('updating_booking_status.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ booking_id: bookingId, status: status }),
+    })
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Server response:', data);
+            if (data.success) {
+                alert('Status updated successfully.');
+                location.reload(); // Reload the page to reflect changes
+            } else {
+                alert('Failed to update status: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            alert('An error occurred while updating the status.');
+        });
+}
+
+    </script>
 </body>
 </html>

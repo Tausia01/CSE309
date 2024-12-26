@@ -106,57 +106,62 @@
 </body>
 </html>
 
-
 <?php
-// Include the database connection
+session_start(); // Start session at the top
 include 'db_config.php';
 
-// Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Collect and sanitize form data
-    $id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
+    $id = trim($_POST['id']); // Collect and sanitize ID
     $password = $_POST['password'];
 
     try {
-        // Determine if the user is admin or faculty
-        if (is_numeric($id)) {
-            // Check if the user exists in the faculty table
-            $stmt = $conn->prepare("SELECT password FROM faculty WHERE id = ?");
-            $stmt->bind_param('i', $id);
-        } else {
-            // Check if the user exists in the admin table (using email)
-            $stmt = $conn->prepare("SELECT password FROM admins WHERE email = ?");
-            $stmt->bind_param('s', $id);
-        }
-
+        // First, check if the user is an admin
+        $stmt = $conn->prepare("SELECT id, password FROM admins WHERE id = ?");
+        $stmt->bind_param('s', $id);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
+            // User is an admin
             $row = $result->fetch_assoc();
             $hashedPassword = $row['password'];
 
-            // Verify the password
             if (password_verify($password, $hashedPassword)) {
-                // Redirect based on user type
-                if (is_numeric($id)) {
-                    // Redirect faculty
-                    header("Location: faculty_account.php");
-                } else {
-                    // Redirect admin
-                    header("Location: booking_requests.php");
-                }
+                $_SESSION['admin_id'] = $row['id']; // Set session for admin
+                header("Location: booking_requests.php");
                 exit;
             } else {
-                die("Invalid password.");
+                echo "Invalid password.";
+                exit;
             }
-        } else {
-            die("User not found.");
         }
+
+        // If not found in admins, check faculty
+        $stmt = $conn->prepare("SELECT id, password FROM faculty WHERE id = ?");
+        $stmt->bind_param('s', $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            // User is a faculty member
+            $row = $result->fetch_assoc();
+            $hashedPassword = $row['password'];
+
+            if (password_verify($password, $hashedPassword)) {
+                $_SESSION['faculty_id'] = $row['id']; // Set session for faculty
+                header("Location: faculty_account.php");
+                exit;
+            } else {
+                echo "Invalid password.";
+                exit;
+            }
+        }
+
+        // If no match found
+        echo "User not found.";
     } catch (Exception $e) {
         die("Error: " . $e->getMessage());
     }
-} else {
-    die("Invalid request method.");
 }
 ?>
+
