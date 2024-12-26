@@ -4,6 +4,7 @@ header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $roomType = $_POST['room_type'];
+    $course_name = $_POST['course_name'];
     $capacity = $_POST['capacity'];
     $date = $_POST['date'];
     $startTime = $_POST['start_time'];
@@ -25,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             )
         )
     ");
-    $stmt->bind_param('sssssi', $roomType, $capacity, $endDateTime, $startDateTime, $startDateTime, $endDateTime);
+    $stmt->bind_param('isssss', $roomType, $capacity, $endDateTime, $startDateTime, $startDateTime, $endDateTime);
     $stmt->execute();
     $result = $stmt->get_result();
     $availableRooms = $result->fetch_all(MYSQLI_ASSOC);

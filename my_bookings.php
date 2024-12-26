@@ -135,7 +135,7 @@
                     while ($row = $result->fetch_assoc()) {
                         echo "<tr>
                                 <td>" . htmlspecialchars($row['classroom']) . "</td>
-                                <td>" . htmlspecialchars($row['course_name'] ?? 'N/A') . "</td>
+                                <td>" . htmlspecialchars($row['course_name']) . "</td>
                                 <td>" . htmlspecialchars($row['booking_date']) . "</td>
                                 <td>" . htmlspecialchars($row['start_time']) . "</td>
                                 <td>" . htmlspecialchars($row['end_time']) . "</td>

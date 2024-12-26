@@ -105,6 +105,9 @@
                     <option value="lecture gallery">Lecture Gallery</option>
                 </select>
 
+                <label for="course_name">Course ID:</label>
+                <input type="text" id="course_name" name="course_name" required>
+
                 <label for="capacity">Capacity:</label>
                 <input type="number" id="capacity" name="capacity" min="1" required>
 
