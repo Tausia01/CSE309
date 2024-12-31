@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $rowIndex = 5; // Start from row 5
             $conn->autocommit(false); // Disable autocommit for batch processing
 
-            while ($rowIndex <= 20) {
+            while ($rowIndex <= 10) {
                 $roomID = $sheet->getCell('H' . $rowIndex)->getValue();
                 $roomCapacity = $sheet->getCell('I' . $rowIndex)->getValue();
 
@@ -43,10 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $startTime = $sheet->getCell('M' . $rowIndex)->getValue();
                 $endTime = $sheet->getCell('N' . $rowIndex)->getValue();
                 $dayPattern = $sheet->getCell('O' . $rowIndex)->getValue(); // 'MW' or 'ST'
-
-                // Debugging output
-                echo "Row $rowIndex Start Time (Raw): $startTime<br>";
-                echo "Row $rowIndex End Time (Raw): $endTime<br>";
 
                 try {
                     // Convert Excel time to H:i:s format
@@ -70,10 +66,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bind_param('si', $roomID, $roomCapacity);
                 $stmt->execute();
 
+                // Retrieve room ID for booking insertion
+                $roomIDQuery = $conn->prepare("SELECT id FROM rooms WHERE name = ?");
+                $roomIDQuery->bind_param('s', $roomID);
+                $roomIDQuery->execute();
+                $roomResult = $roomIDQuery->get_result();
+
+                if ($roomResult->num_rows > 0) {
+                    $roomRow = $roomResult->fetch_assoc();
+                    $roomDBID = $roomRow['id']; // Use this as room_id
+                } else {
+                    echo "Error: Room '$roomID' could not be found or inserted.<br>";
+                    $rowIndex++;
+                    continue;
+                }
+
                 // Insert faculty if not exists
                 $stmt = $conn->prepare("INSERT IGNORE INTO faculty (id, name) VALUES (?, ?)");
                 $stmt->bind_param('is', $facultyID, $facultyName);
                 $stmt->execute();
+
+                // Verify faculty ID exists
+                $facultyIDQuery = $conn->prepare("SELECT id FROM faculty WHERE id = ?");
+                $facultyIDQuery->bind_param('i', $facultyID);
+                $facultyIDQuery->execute();
+                $facultyResult = $facultyIDQuery->get_result();
+
+                if ($facultyResult->num_rows === 0) {
+                    echo "Error: Faculty ID '$facultyID' does not exist or was not inserted.<br>";
+                    $rowIndex++;
+                    continue; // Skip this row
+                }
 
                 // Define the day mapping
                 $dayMapping = [
@@ -96,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         // Insert booking
                         $stmt = $conn->prepare("INSERT INTO bookings (room_id, faculty_id, start_time, end_time, status) VALUES (?, ?, ?, ?, 'Confirmed')");
-                        $stmt->bind_param('siss', $roomID, $facultyID, $startTimeForDate, $endTimeForDate);
+                        $stmt->bind_param('iiss', $roomDBID, $facultyID, $startTimeForDate, $endTimeForDate);
                         $stmt->execute();
                     }
 

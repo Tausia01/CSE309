@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             )
         )
     ");
-    $stmt->bind_param('isssss', $roomType, $capacity, $endDateTime, $startDateTime, $startDateTime, $endDateTime);
+    $stmt->bind_param('sissss', $roomType, $capacity, $endDateTime, $startDateTime, $startDateTime, $endDateTime);
     $stmt->execute();
     $result = $stmt->get_result();
     $availableRooms = $result->fetch_all(MYSQLI_ASSOC);
