@@ -62,9 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
 
                 // Insert room if not exists
-                $stmt = $conn->prepare("INSERT IGNORE INTO rooms (name, capacity) VALUES (?, ?)");
-                $stmt->bind_param('si', $roomID, $roomCapacity);
-                $stmt->execute();
+                $stmt = $conn->prepare("INSERT IGNORE INTO rooms (name, capacity, type) VALUES (?, ?, ?)");
+                $roomType = 'Classroom'; // Manually set the room type to 'Classroom'
+                $stmt->bind_param('sis', $roomID, $roomCapacity, $roomType);
+                $stmt->execute();       
 
                 // Retrieve room ID for booking insertion
                 $roomIDQuery = $conn->prepare("SELECT id FROM rooms WHERE name = ?");

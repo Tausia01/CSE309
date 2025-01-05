@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -90,6 +88,7 @@
             <?php
             include 'db_config.php';
 
+            // Fetch only pending bookings
             $query = "
                 SELECT 
                     b.id AS booking_id,
@@ -103,6 +102,7 @@
                 FROM bookings b
                 JOIN rooms r ON b.room_id = r.id
                 JOIN faculty f ON b.faculty_id = f.id
+                WHERE b.status = 'Pending' -- Only show pending bookings
                 ORDER BY b.start_time ASC
             ";
 
@@ -110,7 +110,7 @@
 
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
-                    echo "<tr>
+                    echo "<tr id='booking_" . $row['booking_id'] . "'>
                             <td>" . htmlspecialchars($row['classroom']) . "</td>
                             <td>" . htmlspecialchars($row['faculty_id']) . "</td>
                             <td>" . htmlspecialchars($row['faculty_name']) . "</td>
@@ -119,16 +119,16 @@
                             <td>" . htmlspecialchars($row['end_time']) . "</td>
                             <td>
                                 <select id='status_" . $row['booking_id'] . "'>
-                                    <option value='Pending'" . ($row['status'] === 'Pending' ? ' selected' : '') . ">Pending</option>
-                                    <option value='Confirmed'" . ($row['status'] === 'Confirmed' ? ' selected' : '') . ">Confirm</option>
-                                    <option value='Rejected'" . ($row['status'] === 'Rejected' ? ' selected' : '') . ">Reject</option>
+                                    <option value='Pending' selected>Pending</option>
+                                    <option value='Confirmed'>Confirm</option>
+                                    <option value='Rejected'>Reject</option>
                                 </select>
                             </td>
                             <td><button class='confirm-button' onclick='updateStatus(" . $row['booking_id'] . ")'>Update</button></td>
                           </tr>";
                 }
             } else {
-                echo "<tr><td colspan='8'>No booking requests found.</td></tr>";
+                echo "<tr><td colspan='8'>No pending booking requests found.</td></tr>";
             }
 
             $conn->close();
@@ -137,34 +137,32 @@
     </table>
 
     <script>
-function updateStatus(bookingId) {
-    const status = document.getElementById(`status_${bookingId}`).value;
-    console.log('Sending data:', JSON.stringify({ booking_id: bookingId, status: status }));
+        function updateStatus(bookingId) {
+            const status = document.getElementById(`status_${bookingId}`).value;
 
-    fetch('updating_booking_status.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ booking_id: bookingId, status: status }),
-    })
-        .then(response => {
-            console.log('Response status:', response.status);
-            return response.json();
-        })
-        .then(data => {
-            console.log('Server response:', data);
-            if (data.success) {
-                alert('Status updated successfully.');
-                location.reload(); // Reload the page to reflect changes
-            } else {
-                alert('Failed to update status: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-            alert('An error occurred while updating the status.');
-        });
-}
+            // Debugging log
+            console.log('Updating status for booking:', bookingId, 'to:', status);
 
+            fetch('updating_booking_status.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ booking_id: bookingId, status: status }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Status updated successfully.');
+                        // Remove the row from the table
+                        document.getElementById(`booking_${bookingId}`).remove();
+                    } else {
+                        alert('Failed to update status: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    alert('An error occurred while updating the status.');
+                });
+        }
     </script>
 </body>
 </html>
