@@ -149,12 +149,90 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Import Schedule</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Navbar styling */
+        #navbar {
+            width: 100%;
+            background-color: #389AD7;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Centered form container */
+        form {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 14px;
+            color: #555;
+        }
+
+        input[type="file"],
+        input[type="date"],
+        button {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        button {
+            background-color: #389AD7;
+            color: white;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2d7cb0;
+        }
+
+        /* Form alignment */
+        form label, form input, form button {
+            display: block;
+            width: 100%;
+    
+        }
+    </style>
 </head>
 <body>
     <!-- Include Navbar -->
     <?php include 'admin_header.php'; ?>
 
-    <h2>Upload an Excel File to Import Schedule</h2>
+    <h1>Admin Panel</h1>
+
+    <h2> Import Assigned Classrooms for the Semester</h2>
 
     <form action="" method="POST" enctype="multipart/form-data">
         <label for="file">Select Excel File:</label>
